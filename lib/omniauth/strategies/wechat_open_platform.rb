@@ -48,9 +48,12 @@ module OmniAuth
           if access_token["scope"] == "snsapi_userinfo"
             response = access_token.get("/sns/userinfo", :params => {"openid" => @uid}, parse: :text)
             @raw_info = JSON.parse(response.body.gsub(/[\u0000-\u001f]+/, ''))
+            @raw_info.merge!("scope" => access_token["scope"]) if access_token["scope"]
+            @raw_info
           else
             @raw_info = {"openid" => @uid }
             @raw_info.merge!("unionid" => access_token["unionid"]) if access_token["unionid"]
+            @raw_info.merge!("scope" => access_token["scope"]) if access_token["scope"]
             @raw_info
           end
         end
